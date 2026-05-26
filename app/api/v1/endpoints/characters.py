@@ -1,0 +1,34 @@
+from fastapi import APIRouter, HTTPException
+
+from app.schemas.character import CharacterGrade, CharacterRead
+from app.types.character import Character
+
+router = APIRouter(prefix="/characters", tags=["Characters"])
+
+characters: list[Character] = [
+    {"id": 1, "name": "Yuji Itadori", "grade": CharacterGrade.FIRST_YEAR},
+    {"id": 2, "name": "Satoru Gojo", "grade": CharacterGrade.SPECIAL_GRADE},
+    {"id": 3, "name": "Nobara Kugisaki", "grade": CharacterGrade.FIRST_YEAR},
+]
+
+
+@router.get("", response_model=list[CharacterRead])
+async def list_characters(grade: CharacterGrade | None = None) -> list[Character]:
+    """Endpoint to list characters"""
+    if grade is None:
+        return characters
+
+    return [
+        character
+        for character in characters
+        if character["grade"].lower() == grade.lower()
+    ]
+
+
+@router.get("/{character_id}", response_model=CharacterRead)
+async def get_character(character_id: int) -> Character:
+    """Endpoint to get character by ID"""
+    for character in characters:
+        if character["id"] == character_id:
+            return character
+    raise HTTPException(status_code=404, detail="Character not found")
