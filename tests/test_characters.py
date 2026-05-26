@@ -1,7 +1,6 @@
 from fastapi.testclient import TestClient
 
 from app.main import app
-
 from app.schemas.character import CharacterGrade
 
 client = TestClient(app)
@@ -41,3 +40,8 @@ def test_list_characters_can_filter_by_grade() -> None:
         {"id": 3, "name": "Nobara Kugisaki", "grade": CharacterGrade.FIRST_YEAR},
     ]
 
+
+def test_list_characters_with_invalid_grade_returns_422() -> None:
+    response = client.get("/api/v1/characters?grade=Unknown")
+
+    assert response.status_code == 422
