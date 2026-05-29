@@ -18,6 +18,7 @@ A learning-focused REST API inspired by Jujutsu Kaisen, built with FastAPI while
 - Versioned API under `/api/v1`
 - Character listing endpoint
 - Character detail endpoint
+- Character creation endpoint
 - Grade filtering with enum validation
 - Health check endpoint
 - Pydantic response schemas
@@ -87,6 +88,7 @@ http://127.0.0.1:8000/docs
 | `GET` | `/api/v1/characters` | List all characters |
 | `GET` | `/api/v1/characters?grade=First-year` | Filter characters by grade |
 | `GET` | `/api/v1/characters/{character_id}` | Get one character by ID |
+| `POST` | `/api/v1/characters` | Create a new character |
 
 ## Example Responses
 
@@ -112,6 +114,30 @@ Health check:
 ```json
 {
   "status": "ok"
+}
+```
+
+Create character:
+
+```http
+POST /api/v1/characters
+Content-Type: application/json
+```
+
+```json
+{
+  "name": "Maki Zenin",
+  "grade": "First-year"
+}
+```
+
+Expected response:
+
+```json
+{
+  "id": 4,
+  "name": "Maki Zenin",
+  "grade": "First-year"
 }
 ```
 
@@ -151,6 +177,7 @@ Current test coverage focuses on:
 - Returning `404` when a character does not exist
 - Filtering by grade
 - Rejecting invalid grade filters
+- Creating characters
 - Health check response
 
 ## Roadmap

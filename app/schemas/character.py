@@ -13,3 +13,7 @@ class CharacterRead(BaseModel):
     name: str
     grade: CharacterGrade
 
+
+class CharacterCreate(BaseModel):
+    name: str
+    grade: CharacterGrade
