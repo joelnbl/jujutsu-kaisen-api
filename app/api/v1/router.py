@@ -6,3 +6,4 @@ api_router = APIRouter()
 
 api_router.include_router(health.router)
 api_router.include_router(characters.router)
+api_router.include_router(characters.admin_router)

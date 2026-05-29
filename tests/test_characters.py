@@ -49,7 +49,7 @@ def test_list_characters_with_invalid_grade_returns_422() -> None:
 
 def test_create_character_returns_created_character() -> None:
     response = client.post(
-        "/api/v1/characters",
+        "/api/v1/admin/characters",
         json={"name": "Maki Zenin", "grade": "First-year"},
     )
 
@@ -59,3 +59,30 @@ def test_create_character_returns_created_character() -> None:
         "name": "Maki Zenin",
         "grade": "First-year",
     }
+
+
+def test_create_character_without_name_returns_422() -> None:
+    response = client.post(
+        "/api/v1/admin/characters",
+        json={"grade": "First-year"},
+    )
+
+    assert response.status_code == 422
+
+
+def test_create_character_with_invalid_grade_returns_422() -> None:
+    response = client.post(
+        "/api/v1/admin/characters",
+        json={"name": "Maki Zenin", "grade": "Unknown"},
+    )
+
+    assert response.status_code == 422
+
+
+def test_create_character_on_public_route_returns_405() -> None:
+    response = client.post(
+        "/api/v1/characters",
+        json={"name": "Maki Zenin", "grade": "First-year"},
+    )
+
+    assert response.status_code == 405

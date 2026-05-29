@@ -18,7 +18,7 @@ A learning-focused REST API inspired by Jujutsu Kaisen, built with FastAPI while
 - Versioned API under `/api/v1`
 - Character listing endpoint
 - Character detail endpoint
-- Character creation endpoint
+- Admin character creation endpoint
 - Grade filtering with enum validation
 - Health check endpoint
 - Pydantic response schemas
@@ -88,7 +88,22 @@ http://127.0.0.1:8000/docs
 | `GET` | `/api/v1/characters` | List all characters |
 | `GET` | `/api/v1/characters?grade=First-year` | Filter characters by grade |
 | `GET` | `/api/v1/characters/{character_id}` | Get one character by ID |
-| `POST` | `/api/v1/characters` | Create a new character |
+| `POST` | `/api/v1/admin/characters` | Create a new character as an admin action |
+
+## Business Logic
+
+The public character routes behave like a read-only catalog. Anyone can browse,
+filter, and inspect characters.
+
+Catalog writes are separated under admin routes:
+
+```text
+/api/v1/admin/characters
+```
+
+Authentication and role-based authorization are not implemented yet, but the API
+structure already reflects the intended product rule: normal users should not
+create official catalog characters.
 
 ## Example Responses
 
@@ -120,7 +135,7 @@ Health check:
 Create character:
 
 ```http
-POST /api/v1/characters
+POST /api/v1/admin/characters
 Content-Type: application/json
 ```
 
@@ -177,7 +192,8 @@ Current test coverage focuses on:
 - Returning `404` when a character does not exist
 - Filtering by grade
 - Rejecting invalid grade filters
-- Creating characters
+- Creating characters through the admin route
+- Rejecting character creation on the public catalog route
 - Health check response
 
 ## Roadmap
@@ -186,7 +202,7 @@ Current test coverage focuses on:
 - Add user registration and login
 - Add JWT authentication
 - Add forgot password and reset password flow
-- Add admin-only create/update/delete endpoints
+- Enforce admin-only create/update/delete endpoints with authentication
 - Add more Jujutsu Kaisen resources such as techniques, clans, and domains
 
 ## License
