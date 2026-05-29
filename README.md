@@ -20,6 +20,7 @@ A learning-focused REST API inspired by Jujutsu Kaisen, built with FastAPI while
 - Character detail endpoint
 - Admin character creation endpoint
 - Grade filtering with enum validation
+- User registration endpoint
 - Health check endpoint
 - Pydantic response schemas
 - Pytest coverage for the current API behavior
@@ -39,16 +40,18 @@ app/
   api/
     v1/
       endpoints/
+        auth.py
         characters.py
         health.py
       router.py
   schemas/
+    auth.py
     character.py
     health.py
-  types/
-    character.py
+    user.py
   main.py
 tests/
+  test_auth.py
   test_characters.py
   test_health.py
 ```
@@ -89,6 +92,7 @@ http://127.0.0.1:8000/docs
 | `GET` | `/api/v1/characters?grade=First-year` | Filter characters by grade |
 | `GET` | `/api/v1/characters/{character_id}` | Get one character by ID |
 | `POST` | `/api/v1/admin/characters` | Create a new character as an admin action |
+| `POST` | `/api/v1/auth/register` | Register a new user |
 
 ## Business Logic
 
@@ -101,9 +105,13 @@ Catalog writes are separated under admin routes:
 /api/v1/admin/characters
 ```
 
-Authentication and role-based authorization are not implemented yet, but the API
-structure already reflects the intended product rule: normal users should not
-create official catalog characters.
+User registration is currently implemented in memory. New users are assigned the
+`user` role by the backend, and passwords are accepted only as input data: they
+are not returned in API responses.
+
+Login, password hashing, JWT sessions, and real role-based authorization are not
+implemented yet. The API structure already reflects the intended product rule:
+normal users should not create official catalog characters.
 
 ## Example Responses
 
@@ -156,6 +164,32 @@ Expected response:
 }
 ```
 
+Register user:
+
+```http
+POST /api/v1/auth/register
+Content-Type: application/json
+```
+
+```json
+{
+  "email": "yuji@example.com",
+  "username": "yuji",
+  "password": "secret123"
+}
+```
+
+Expected response:
+
+```json
+{
+  "id": 1,
+  "email": "yuji@example.com",
+  "username": "yuji",
+  "role": "user"
+}
+```
+
 ## Validation
 
 The `grade` query parameter is backed by an enum, so invalid values return `422`.
@@ -194,12 +228,14 @@ Current test coverage focuses on:
 - Rejecting invalid grade filters
 - Creating characters through the admin route
 - Rejecting character creation on the public catalog route
+- Registering users without returning passwords
 - Health check response
 
 ## Roadmap
 
 - Add persistent database storage
-- Add user registration and login
+- Add login
+- Add password hashing
 - Add JWT authentication
 - Add forgot password and reset password flow
 - Enforce admin-only create/update/delete endpoints with authentication

@@ -1,1 +1,0 @@
-"""Internal application types."""
